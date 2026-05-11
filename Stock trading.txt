@@ -1,0 +1,144 @@
+Stock trading 
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+// Stock Class
+class Stock {
+    String stockName;
+    double price;
+
+    Stock(String stockName, double price) {
+        this.stockName = stockName;
+        this.price = price;
+    }
+}
+
+// User Portfolio Class
+class Portfolio {
+    double balance;
+    ArrayList<String> ownedStocks = new ArrayList<>();
+
+    Portfolio(double balance) {
+        this.balance = balance;
+    }
+
+    // Buy Stock
+    void buyStock(Stock stock) {
+        if (balance >= stock.price) {
+            balance -= stock.price;
+            ownedStocks.add(stock.stockName);
+            System.out.println("Successfully bought: " + stock.stockName);
+        } else {
+            System.out.println("Insufficient balance!");
+        }
+    }
+
+    // Sell Stock
+    void sellStock(String stockName, double price) {
+        if (ownedStocks.contains(stockName)) {
+            ownedStocks.remove(stockName);
+            balance += price;
+            System.out.println("Successfully sold: " + stockName);
+        } else {
+            System.out.println("Stock not found in portfolio!");
+        }
+    }
+
+    // Display Portfolio
+    void showPortfolio() {
+        System.out.println("\n===== Portfolio =====");
+        System.out.println("Available Balance: ₹" + balance);
+        System.out.println("Owned Stocks: " + ownedStocks);
+    }
+}
+
+// Main Class (Use this for OnlineGDB)
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Sample Market Data
+        ArrayList<Stock> market = new ArrayList<>();
+        market.add(new Stock("TCS", 3500));
+        market.add(new Stock("Infosys", 1500));
+        market.add(new Stock("Wipro", 450));
+        market.add(new Stock("Reliance", 2800));
+
+        Portfolio user = new Portfolio(10000); // Initial balance
+
+        int choice;
+
+        do {
+            System.out.println("\n===== Stock Trading Platform =====");
+            System.out.println("1. View Market Data");
+            System.out.println("2. Buy Stock");
+            System.out.println("3. Sell Stock");
+            System.out.println("4. View Portfolio");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+
+            choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.println("\n===== Market Data =====");
+                    for (Stock s : market) {
+                        System.out.println(s.stockName + " - ₹" + s.price);
+                    }
+                    break;
+
+                case 2:
+                    System.out.print("Enter stock name to buy: ");
+                    String buyName = sc.nextLine();
+
+                    boolean foundBuy = false;
+                    for (Stock s : market) {
+                        if (s.stockName.equalsIgnoreCase(buyName)) {
+                            user.buyStock(s);
+                            foundBuy = true;
+                            break;
+                        }
+                    }
+
+                    if (!foundBuy) {
+                        System.out.println("Stock not available in market!");
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Enter stock name to sell: ");
+                    String sellName = sc.nextLine();
+
+                    boolean foundSell = false;
+                    for (Stock s : market) {
+                        if (s.stockName.equalsIgnoreCase(sellName)) {
+                            user.sellStock(s.stockName, s.price);
+                            foundSell = true;
+                            break;
+                        }
+                    }
+
+                    if (!foundSell) {
+                        System.out.println("Stock not found in market!");
+                    }
+                    break;
+
+                case 4:
+                    user.showPortfolio();
+                    break;
+
+                case 5:
+                    System.out.println("Exiting program...");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+
+        } while (choice != 5);
+
+        sc.close();
+    }
+}
